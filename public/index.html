@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Project Showcase</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                container: { center: true, padding: "2rem", screens: { "2xl": "1400px" } },
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        border: "hsl(214.3 31.8% 91.4%)",
+                        input: "hsl(214.3 31.8% 91.4%)",
+                        ring: "hsl(221.2 83.2% 53.3%)",
+                        background: "hsl(0 0% 100%)",
+                        foreground: "hsl(222.2 84% 4.9%)",
+                        primary: { DEFAULT: "hsl(221.2 83.2% 53.3%)", foreground: "hsl(210 40% 98%)" },
+                        muted: { DEFAULT: "hsl(210 40% 96.1%)", foreground: "hsl(215.4 16.3% 46.9%)" },
+                        card: { DEFAULT: "hsl(0 0% 100%)", foreground: "hsl(222.2 84% 4.9%)" },
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        .lucide { width: 1em; height: 1em; stroke-width: 2; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        
+        @keyframes kenburns {
+            0% { opacity: 0; transform: scale(1.0); }
+            5% { opacity: 1; }
+            20% { opacity: 1; }
+            25% { opacity: 0; transform: scale(1.1); }
+            100% { opacity: 0; }
+        }
+        .slideshow-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            animation: kenburns 40s linear infinite;
+        }
+        
+        /* Lightbox Styles */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox img {
+            max-width: 95vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: scale(0.8);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .lightbox.active img {
+            transform: scale(1);
+        }
+        .gallery-item { cursor: zoom-in; }
+
+        /* Launch Overlay */
+        #launch-overlay {
+            position: fixed;
+            inset: 0;
+            background: #0f172a;
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .launch-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .launch-progress {
+            width: 0%;
+            height: 100%;
+            background: #4f46e5;
+            transition: width 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        
+        /* Build Ready UI */
+        #build-ready-card {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            animation: buildSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            opacity: 0;
+        }
+        @keyframes buildSlideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .download-btn-premium {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.5);
+            transition: all 0.3s ease;
+        }
+        .download-btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(79, 70, 229, 0.6);
+        }
+
+        /* WOW Factors */
+        #custom-cursor {
+            width: 20px; height: 20px; border: 2px solid #4f46e5; border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 99999;
+            transition: transform 0.15s ease-out, background 0.3s ease, border-color 0.3s ease, width 0.3s ease, height 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+        .cursor-hover { width: 50px; height: 50px; background: rgba(79, 70, 229, 0.1); border-color: transparent; backdrop-filter: blur(2px); }
+        
+        #scroll-progress {
+            position: fixed; top: 0; left: 0; width: 0%; height: 4px;
+            background: linear-gradient(to right, #4f46e5, #ec4899);
+            z-index: 10001; transition: width 0.1s ease;
+        }
+        
+        .glass-nav {
+            margin: 1rem; border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+
+        /* WOW Factors */
+        #custom-cursor {
+            width: 20px; height: 20px; border: 2px solid #4f46e5; border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 99999;
+            transition: transform 0.15s ease-out, background 0.3s ease, border-color 0.3s ease, width 0.3s ease, height 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+        .cursor-hover { width: 50px; height: 50px; background: rgba(79, 70, 229, 0.1); border-color: transparent; backdrop-filter: blur(2px); }
+        
+        #scroll-progress {
+            position: fixed; top: 0; left: 0; width: 0%; height: 4px;
+            background: linear-gradient(to right, #4f46e5, #06b6d4);
+            z-index: 10001; transition: width 0.1s ease;
+        }
+        
+        .glass-nav {
+            margin: 1rem; border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dynamic Mesh Background */
+        .mesh-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-color: #020617;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(6, 182, 212, 0.15) 0px, transparent 50%);
+            background-size: 100% 100%;
+            animation: meshPulse 15s ease infinite alternate;
+        }
+        @keyframes meshPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1) rotate(1deg); }
+        }
+        .dot-pattern {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+        }
+        .glass-section {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(12px);
+            color: #f1f5f9;
+        }
+        .card-glass {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .card-glass:hover {
+            background: rgba(30, 41, 59, 0.7);
+            border-color: rgba(79, 70, 229, 0.4);
+        }
+
+        /* Hero Slideshow */
+        .hero-slideshow {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            filter: brightness(0.6) saturate(1.2);
+            animation: slideShow 40s linear infinite;
+        }
+        @keyframes slideShow {
+            0% { opacity: 0; transform: scale(1); }
+            2% { opacity: 1; }
+            12% { opacity: 1; }
+            15% { opacity: 0; transform: scale(1.1); }
+            100% { opacity: 0; }
+        }
+        .slide:nth-child(1) { background-image: url('1.jpeg'); animation-delay: 0s; }
+        .slide:nth-child(2) { background-image: url('2.jpeg'); animation-delay: 5s; }
+        .slide:nth-child(3) { background-image: url('3.jpeg'); animation-delay: 10s; }
+        .slide:nth-child(4) { background-image: url('4.jpeg'); animation-delay: 15s; }
+        .slide:nth-child(5) { background-image: url('5.jpeg'); animation-delay: 20s; }
+        .slide:nth-child(6) { background-image: url('6.jpeg'); animation-delay: 25s; }
+        .slide:nth-child(7) { background-image: url('7.jpeg'); animation-delay: 30s; }
+        .slide:nth-child(8) { background-image: url('8.jpeg'); animation-delay: 35s; }
+        
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(2, 6, 23, 0.8), rgba(2, 6, 23, 0.4), rgba(2, 6, 23, 0.9));
+            z-index: 1;
+        }
+
+
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col bg-slate-950 text-white antialiased cursor-none">
+    <div class="mesh-bg"></div>
+    <div class="dot-pattern"></div>
+    <div id="custom-cursor" class="hidden md:block"></div>
+    <div id="scroll-progress"></div>
+
+    <!-- NAVIGATION -->
+    <header class="sticky top-0 z-50 w-full glass-nav transition-all duration-300">
+        <div class="container mx-auto px-4 md:px-6 flex h-16 items-center justify-between">
+            <div class="flex items-center gap-2">
+                <img src="logo.png" alt="Logo" class="h-12 w-auto object-contain">
+            </div>
+
+            <nav class="hidden md:flex gap-6">
+                <a href="#home" class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Home</a>
+                <a href="#problem"
+                    class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Problem</a>
+                <a href="#solution"
+                    class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Solution</a>
+                <a href="#gallery"
+                    class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Gallery</a>
+                <a href="#demo" class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Demo</a>
+                <a href="#research"
+                    class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Research</a>
+                <a href="#commercialization"
+                    class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Commercialization</a>
+                <a href="#downloads"
+                    class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Downloads</a>
+            </nav>
+
+            <button id="menu-btn" class="md:hidden p-2 text-slate-300 hover:text-primary">
+                <i id="menu-icon" data-lucide="menu" class="h-6 w-6"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Nav -->
+        <div id="mobile-menu" class="hidden md:hidden border-t p-4 bg-white shadow-lg">
+            <nav class="flex flex-col gap-4">
+                <a href="#home" class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Home</a>
+                <a href="#problem"
+                    class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Problem</a>
+                <a href="#solution"
+                    class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Solution</a>
+                <a href="#gallery"
+                    class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Gallery</a>
+                <a href="#demo" class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Demo</a>
+                <a href="#research"
+                    class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Research</a>
+                <a href="#commercialization"
+                    class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Commercialization</a>
+                <a href="#downloads"
+                    class="text-sm font-medium text-slate-300 transition-colors hover:text-primary">Downloads</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-1">
+        <!-- 1. HERO SECTION -->
+        <section id="home"
+            class="relative pt-24 pb-32 md:pt-32 md:pb-40 overflow-hidden min-h-[90vh] flex items-center">
+            <!-- Cinematic Slideshow Background -->
+            <div class="hero-slideshow">
+                <div class="slide"></div>
+                <div class="slide"></div>
+                <div class="slide"></div>
+                <div class="slide"></div>
+                <div class="slide"></div>
+                <div class="slide"></div>
+                <div class="slide"></div>
+                <div class="slide"></div>
+                <div class="hero-overlay"></div>
+            </div>
+
+            <div class="container mx-auto px-4 md:px-6 relative z-10">
+                <div class="flex flex-col items-center text-center space-y-8">
+                    <div data-aos="fade-up" class="space-y-4 max-w-4xl">
+                        <h2
+                            class="text-sm font-semibold tracking-wider text-white uppercase bg-primary/40 backdrop-blur-md px-4 py-1 rounded-full inline-block shadow-lg">
+                            B.Sc. (Hons) IT – Interactive Media | University of Sri Jayewardenepura
+                        </h2>
+                        <h1
+                            class="text-4xl md:text-6xl font-extrabold tracking-tight lg:text-7xl text-white drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+                            THE WORD GARDEN
+
+                        </h1>
+                        <p
+                            class="text-xl text-slate-100 md:text-2xl max-w-3xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+                            “Transforming dyslexia learning through an adaptive, multiplayer game that enhances
+                            cognitive skills, confidence, and social interaction using multimodal and reward-driven
+                            experiences.”
+                        </p>
+                    </div>
+
+                    <div data-aos="fade-up" data-aos-delay="200"
+                        class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                        <a href="#demo"
+                            class="inline-flex items-center justify-center rounded-md font-medium bg-primary text-white hover:bg-primary/90 h-12 px-8 text-base shadow-lg hover:shadow-xl transition-all w-full sm:w-auto">
+                            View Demo <i data-lucide="arrow-right" class="ml-2 h-4 w-4"></i>
+                        </a>
+                        <a href="#downloads"
+                            class="inline-flex items-center justify-center rounded-md font-medium border border-slate-200 bg-white/50 backdrop-blur-sm hover:bg-slate-100 h-12 px-8 text-base text-slate-900 transition-all w-full sm:w-auto">
+                            Download Resources <i data-lucide="download" class="ml-2 h-4 w-4"></i>
+                        </a>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+            </div>
+            </div>
+            </div>
+        </section>
+
+        <!-- 2. PROJECT IDENTITY SECTION -->
+        <section class="py-24 glass-section">
+            <div class="container mx-auto px-4 md:px-6">
+                <div data-aos="fade-up" class="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+                    <div class="space-y-6">
+                        <div class="inline-block rounded-lg bg-primary/10 px-3 py-1 text-sm text-primary font-medium">
+                            Project Overview</div>
+                        <h2 class="text-3xl font-bold tracking-tight md:text-4xl">Transforming Ideas into Interactive
+                            Solutions</h2>
+                        <p class="text-lg text-slate-300 leading-relaxed">[Provide a 2-3 paragraph introduction
+                            explaining what your project is and why it matters. Describe the core concept, the
+                            inspiration behind it, and the overarching goal you set out to achieve for your final year
+                            project.]</p>
+                        <p class="text-lg text-slate-300 leading-relaxed">[This second paragraph should focus on the
+                            technical or creative approach you took, highlighting your specialization in Interactive
+                            Media and how it informed your solution design.]</p>
+                    </div>
+
+                    <div class="rounded-xl border-2 bg-blue-50/90 text-blue-900 shadow-xl overflow-hidden border-blue-200">
+                        <div class="flex flex-col space-y-1.5 p-6 bg-blue-100/50 border-b border-blue-200">
+                            <h3 class="font-bold leading-none tracking-tight text-xl text-blue-900">Project Details</h3>
+                        </div>
+                        <div class="p-6 grid gap-4">
+                            <div class="grid grid-cols-3 gap-4 border-b border-blue-100 pb-4">
+                                <div class="font-bold text-blue-700">Project Title</div>
+                                <div class="col-span-2 font-bold text-blue-900">THE WORD GARDEN: EVALUATING MULTIMODAL MULTIPLAYER
+                                    GAMES FOR COGNITIVE AND SOCIAL SKILLS DEVELOPMENT IN DYSLEXIC CHILDREN</div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 border-b border-blue-100 pb-4">
+                                <div class="font-bold text-blue-700">Tagline</div>
+                                <div class="col-span-2 font-bold text-blue-900">[ONE SENTENCE VALUE STATEMENT]</div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 border-b border-blue-100 pb-4">
+                                <div class="font-bold text-blue-700">Team</div>
+                                <div class="col-span-2 font-bold text-blue-900">H.T.P.N.P.Gunasekara – Lead Developer & Researcher</div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 border-b border-blue-100 pb-4">
+                                <div class="font-bold text-blue-700">Specialization</div>
+                                <div class="col-span-2 font-bold text-blue-900">Interactive Media</div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="font-bold text-blue-700">Academic Year</div>
+                                <div class="col-span-2 font-bold text-blue-900">2026</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. PROBLEM AND NEED SECTION -->
+        <section id="problem" class="py-24 glass-section border-y border-slate-100">
+            <div class="container mx-auto px-4 md:px-6">
+                <div data-aos="fade-up" class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <h2 class="text-3xl font-bold tracking-tight md:text-4xl">The Problem We're Solving</h2>
+                    <p class="text-lg text-slate-300">The Word Garden addresses the core educational and psychological
+                        gaps for dyslexic learners by creating a non-competitive, multiplayer environment that fosters
+                        confidence through adaptive personalization and safe social interaction.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+                    <div data-aos="fade-right"
+                        class="order-2 md:order-1 rounded-xl overflow-hidden border shadow-lg aspect-square sm:aspect-video md:aspect-square relative bg-white">
+                        <img src="8.jpeg" alt="Dyslexia Learning Challenges"
+                            class="absolute inset-0 w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-red-900/10 mix-blend-multiply"></div>
+                    </div>
+
+                    <div data-aos="fade-left" class="order-1 md:order-2 space-y-6">
+                        <div class="rounded-xl border card-glass border-l-4 border-l-red-500">
+                            <div class="p-6 pb-2">
+                                <h3 class="text-xl font-semibold flex items-center gap-2">
+                                    <span class="bg-red-100 text-red-600 p-2 rounded-full"><i data-lucide="users"
+                                            class="h-4 w-4"></i></span>
+                                    The Problem
+                                </h3>
+                            </div>
+                            <div class="p-6 pt-0">
+                                <p class="text-slate-300">Many children with dyslexia struggle to learn effectively
+                                    because most educational tools are competitive, not personalized, and do not support
+                                    confidence or social interaction.</p>
+                            </div>
+                        </div>
+
+                        <div class="rounded-xl border card-glass border-l-4 border-l-orange-500">
+                            <div class="p-6 pb-2">
+                                <h3 class="text-xl font-semibold flex items-center gap-2">
+                                    <span class="bg-orange-100 text-orange-600 p-2 rounded-full"><i data-lucide="globe"
+                                            class="h-4 w-4"></i></span>
+                                    Why It Matters
+                                </h3>
+                            </div>
+                            <div class="p-6 pt-0">
+                                <p class="text-slate-300">This matters because without proper support, children with
+                                    dyslexia can lose confidence, struggle in education, and face long-term challenges
+                                    in communication, learning, and future opportunities.</p>
+                            </div>
+                        </div>
+
+                        <div class="rounded-xl border card-glass border-l-4 border-l-blue-500">
+                            <div class="p-6 pb-2">
+                                <h3 class="text-xl font-semibold flex items-center gap-2">
+                                    <span class="bg-blue-100 text-blue-600 p-2 rounded-full"><i
+                                            data-lucide="check-circle-2" class="h-4 w-4"></i></span>
+                                    Current Gaps
+                                </h3>
+                            </div>
+                            <div class="p-6 pt-0">
+                                <p class="text-slate-300">Current solutions lack personalization, collaborative
+                                    learning, confidence-building features, and proactive feedback, making them less
+                                    effective for children with dyslexia.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. SOLUTION SECTION -->
+        <section id="solution" class="py-24 glass-section border-b border-slate-100">
+            <div class="container mx-auto px-4 md:px-6">
+                <div data-aos="fade-up" class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                    <h2 class="text-3xl font-bold tracking-tight md:text-4xl text-primary">Our Solution</h2>
+                    <p class="text-xl text-slate-300">Our solution is a multiplayer, adaptive learning game that uses
+                        reward-based motivation, anonymous voice interaction, and proactive feedback to support
+                        confidence, engagement, and effective learning for children with dyslexia.</p>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+                    <!-- Feature 1 -->
+                    <div data-aos="fade-up" data-aos-delay="100"
+                        class="rounded-xl border card-glass hover:shadow-md transition-shadow group h-full">
+                        <div class="p-6">
+                            <div
+                                class="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                                <i data-lucide="zap" class="h-6 w-6 text-primary group-hover:text-white"></i>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2">Reward-Based Motivation System</h3>
+                            <p class="text-slate-400">Encourages progress through achievements and positive feedback
+                                instead of competition, helping children feel motivated and confident without fear of
+                                failure.</p>
+                        </div>
+                    </div>
+                    <!-- Feature 2 -->
+                    <div data-aos="fade-up" data-aos-delay="200"
+                        class="rounded-xl border card-glass hover:shadow-md transition-shadow group h-full">
+                        <div class="p-6">
+                            <div
+                                class="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                                <i data-lucide="zap" class="h-6 w-6 text-primary group-hover:text-white"></i>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2">Anonymous Voice Chat</h3>
+                            <p class="text-slate-400">Allows players to communicate in a safe virtual environment
+                                without visual pressure, improving social interaction and building communication
+                                confidence.</p>
+                        </div>
+                    </div>
+                    <!-- Feature 3 -->
+                    <div data-aos="fade-up" data-aos-delay="300"
+                        class="rounded-xl border card-glass hover:shadow-md transition-shadow group h-full">
+                        <div class="p-6">
+                            <div
+                                class="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors">
+                                <i data-lucide="zap" class="h-6 w-6 text-primary group-hover:text-white"></i>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2">Adaptive Personalized Learning</h3>
+                            <p class="text-slate-400">Adjusts difficulty levels, hints, and feedback based on each
+                                child’s performance, ensuring a comfortable learning pace and better learning outcomes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div data-aos="fade-up" class="bg-blue-50 border border-blue-100 rounded-2xl p-8 md:p-12 text-blue-900 shadow-xl">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-4 text-blue-900">What Makes This Unique</h3>
+                            <ul class="space-y-4">
+                                <li class="flex items-start gap-3">
+                                    <i data-lucide="check-circle-2" class="h-6 w-6 text-blue-700 shrink-0"></i>
+                                    <span class="font-bold">Innovation Point 1: <span class="font-normal text-blue-800">A non-competitive reward-based system
+                                        that replaces leaderboards with achievements and positive reinforcement to
+                                        reduce anxiety and build confidence in dyslexic learners.</span></span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i data-lucide="check-circle-2" class="h-6 w-6 text-blue-700 shrink-0"></i>
+                                    <span class="font-bold">Innovation Point 2: <span class="font-normal text-blue-800">A multiplayer anonymous voice
+                                        communication system that enables safe social interaction without visual
+                                        pressure, helping children improve communication skills and teamwork.</span></span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i data-lucide="check-circle-2" class="h-6 w-6 text-blue-700 shrink-0"></i>
+                                    <span class="font-bold">Innovation Point 3: <span class="font-normal text-blue-800">An adaptive learning engine with
+                                        anticipatory multimodal feedback that adjusts difficulty and provides real-time
+                                        visual, audio, and interactive guidance to prevent errors before they
+                                        occur.</span></span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-blue-50/90 rounded-xl shadow-lg border border-blue-200 p-6 text-blue-900">
+                            <h4 class="font-bold text-center mb-4 pb-4 border-b border-blue-200 text-blue-900 uppercase tracking-wider">Competitor Comparison</h4>
+                            <div class="space-y-4">
+                                <div class="grid grid-cols-3 text-sm font-bold text-blue-700 pb-2 border-b border-blue-200">
+                                    <div>Feature</div>
+                                    <div class="text-blue-900 text-center">Our Solution</div>
+                                    <div class="text-center text-blue-400">Others</div>
+                                </div>
+                                <div class="grid grid-cols-3 text-sm items-center py-2 border-b border-blue-100">
+                                    <div class="font-bold">Collaborative Learning</div>
+                                    <div class="text-blue-700 text-center px-2 font-bold italic">Fully integrated real-time system</div>
+                                    <div class="text-center text-blue-400 px-2">Limited or none</div>
+                                </div>
+                                <div class="grid grid-cols-3 text-sm items-center py-2 border-b border-blue-100">
+                                    <div class="font-bold">Adaptive & Anticipatory Feedback</div>
+                                    <div class="text-blue-700 text-center px-2 font-bold italic">Proactive (before error occurs)</div>
+                                    <div class="text-center text-blue-400 px-2">Post-error only</div>
+                                </div>
+                                <div class="grid grid-cols-3 text-sm items-center py-2">
+                                    <div class="font-bold">Cross-Platform (PC + Mobile)</div>
+                                    <div class="text-blue-700 text-center px-2 font-bold italic">Fully supported</div>
+                                    <div class="text-center text-blue-400 px-2">Limited single-platform systems</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. VISUAL SHOWCASE -->
+        <section id="gallery" class="py-24 glass-section border-b border-slate-100">
+            <div class="container mx-auto px-4 md:px-6">
+                <div data-aos="fade-up" class="mb-12 text-center">
+                    <h2 class="text-3xl font-bold tracking-tight md:text-4xl mb-4">Visual Gallery</h2>
+                    <p class="text-lg text-slate-400 max-w-2xl mx-auto">Explore the architecture, interface design, and
+                        functionality of the system.</p>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div data-aos="zoom-in" data-aos-delay="0"
+                        class="group rounded-xl overflow-hidden border card-glass hover:shadow-lg transition-all">
+                        <div class="aspect-video relative overflow-hidden">
+                            <img src="SystemDiagram.png" alt="System Architecture"
+                                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-4 border-t">
+                            <p class="font-medium text-sm">System Architecture Diagram</p>
+                            <p class="text-xs text-slate-400 mt-1">Detailed overview of the Unreal Engine and Flutter
+                                integration.</p>
+                        </div>
+                    </div>
+                    <div data-aos="zoom-in" data-aos-delay="100"
+                        class="group rounded-xl overflow-hidden border card-glass hover:shadow-lg transition-all">
+                        <div class="aspect-video relative overflow-hidden">
+                            <img src="UI_Main.jpeg" alt="Main UI Screen"
+                                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-4 border-t">
+                            <p class="font-medium text-sm">UI Mockup – Main Screen</p>
+                            <p class="text-xs text-slate-400 mt-1">Multiplayer lobby and real-time word challenge
+                                interface.</p>
+                        </div>
+                    </div>
+                    <div data-aos="zoom-in" data-aos-delay="200"
+                        class="group rounded-xl overflow-hidden border card-glass hover:shadow-lg transition-all">
+                        <div class="aspect-video relative overflow-hidden">
+                            <img src="user_flow.png" alt="User Flow"
+                                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-4 border-t">
+                            <p class="font-medium text-sm">User Flow Diagram</p>
+                            <p class="text-xs text-slate-400 mt-1">Adaptive learning path and multimodal feedback loops.
+                            </p>
+                        </div>
+                    </div>
+                    <div data-aos="zoom-in" data-aos-delay="300"
+                        class="group rounded-xl overflow-hidden border card-glass hover:shadow-lg transition-all">
+                        <div class="aspect-video relative overflow-hidden">
+                            <img src="UI_1.jpeg" alt="Multiplayer Challenge"
+                                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-4 border-t">
+                            <p class="font-medium text-sm">Feature Screenshot 1</p>
+                            <p class="text-xs text-slate-400 mt-1">Real-time collaborative gameplay with anonymous voice
+                                chat.</p>
+                        </div>
+                    </div>
+                    <div data-aos="zoom-in" data-aos-delay="400"
+                        class="group rounded-xl overflow-hidden border card-glass hover:shadow-lg transition-all">
+                        <div class="aspect-video relative overflow-hidden">
+                            <img src="UI_2.jpeg" alt="Progress Tracking"
+                                class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-4 border-t">
+                            <p class="font-medium text-sm">Feature Screenshot 2</p>
+                            <p class="text-xs text-slate-400 mt-1">Individualized progress reports and reward
+                                milestones.</p>
+                        </div>
+                    </div>
+                    <div data-aos="zoom-in" data-aos-delay="500"
+                        class="group rounded-xl overflow-hidden border card-glass hover:shadow-lg transition-all">
+                        <div class="relative overflow-hidden bg-slate-100">
+                            <img src="Mobile_UI.png" alt="Mobile View"
+                                class="w-full h-auto block group-hover:scale-105 transition-transform duration-500">
+                        </div>
+                        <div class="p-4 border-t">
+                            <p class="font-medium text-sm">Mobile Responsive View</p>
+                            <p class="text-xs text-slate-400 mt-1">The Flutter-based mobile companion app in action.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. PROTOTYPE / DEMONSTRATION SECTION -->
+        <section id="demo" class="py-24 bg-slate-950 text-slate-50">
+            <div class="container mx-auto px-4 md:px-6">
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div data-aos="fade-right" class="space-y-6">
+                        <div
+                            class="inline-flex items-center rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-sm font-medium text-indigo-300">
+                            <span class="flex h-2 w-2 rounded-full bg-indigo-500 mr-2 animate-pulse"></span>
+                            Working Prototype
+                        </div>
+                        <h2 class="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">See It In Action</h2>
+                        <div class="space-y-4 text-slate-300 text-lg">
+                            <p>We have developed a fully functional MVP of a multiplayer dyslexia learning game using
+                                Unreal Engine (PC) and a Flutter-based mobile app, which supports real-time
+                                collaborative word challenges, voice communication, adaptive difficulty, and
+                                reward-based progression with anticipatory multimodal feedback (visual, audio, and
+                                haptic cues) to guide learners before errors occur.</p>
+                            <p>The system has been fully tested with <strong class="text-indigo-400 text-xl font-bold"><span class="counter" data-target="30">0</span>+</strong> dyslexic children in a controlled study,
+                                demonstrating over <strong class="text-indigo-400 text-xl font-bold"><span class="counter" data-target="98">0</span>%</strong> task completion accuracy, high engagement, reduced cognitive
+                                load, and improved confidence compared to single-player learning tools, thereby
+                                validating the effectiveness of our multimodal multiplayer approach.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-4 pt-4">
+                            <button onclick="launchDemoSequence()"
+                                class="inline-flex items-center justify-center rounded-md text-sm font-medium h-11 px-8 bg-indigo-600 hover:bg-indigo-700 text-white transition-colors border-0 shadow-lg shadow-indigo-500/20 group">
+                                <span class="group-hover:translate-x-1 transition-transform flex items-center">
+                                    Launch Prototype <i data-lucide="rocket" class="ml-2 h-4 w-4"></i>
+                                </span>
+                            </button>
+                            <a href="https://github.com/" target="_blank"
+                                class="inline-flex items-center justify-center rounded-md text-sm font-medium h-11 px-8 border border-slate-700 hover:bg-slate-800 text-slate-200 transition-colors">
+                                <i data-lucide="github" class="mr-2 h-4 w-4"></i> GitHub Repository
+                            </a>
+                        </div>
+                    </div>
+
+                    <div data-aos="fade-left">
+                        <div
+                            class="aspect-video rounded-xl border border-slate-800 bg-slate-900 overflow-hidden shadow-2xl relative">
+                            <video class="w-full h-full object-cover" controls poster="6.jpeg">
+                                <source src="backVideo.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. RESEARCH AND VALIDATION SECTION -->
+        <section id="research" class="py-24 glass-section border-y border-slate-900">
+            <div class="container mx-auto px-4 md:px-6">
+                <div data-aos="fade-up" class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl font-bold tracking-tight md:text-4xl mb-4 text-blue-500">Research Foundation & Validation</h2>
+                    <p class="text-lg text-slate-400">Rigorous academic methodology and real-world testing ensure our
+                        solution is both theoretically sound and practically viable.</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div data-aos="fade-up" class="md:col-span-1">
+                        <div class="rounded-xl border bg-blue-50/90 shadow-lg h-full p-1 border-blue-200">
+                            <div class="p-6 pb-4">
+                                <h3 class="font-bold text-xl flex items-center gap-2 text-blue-900">
+                                    <i data-lucide="book-open" class="h-5 w-5 text-blue-700"></i> Methodology
+                                </h3>
+                            </div>
+                            <div class="p-6 pt-0 space-y-4">
+                                <div>
+                                    <h4 class="font-bold text-sm text-blue-700 mb-1">Approach</h4>
+                                    <p class="text-sm font-bold text-blue-900">Iterative development starting with
+                                        background research and requirement analysis, followed by building a functional
+                                        prototype tested in controlled environments.</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-blue-700 mb-1">Duration</h4>
+                                    <p class="text-sm font-bold text-blue-900">6 months of continuous refinement
+                                        cycles based on direct testing feedback and system performance evaluations.</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-blue-700 mb-1">Validation Methods</h4>
+                                    <ul class="text-sm font-bold text-blue-900 list-disc list-inside space-y-2 mt-1">
+                                        <li>Usability testing with 30 participants</li>
+                                        <li>Academic peer reviews from supervisors & experts</li>
+                                        <li>Pilot testing in real-world learning scenarios</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div data-aos="fade-up" data-aos-delay="200" class="md:col-span-2 space-y-8">
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-4">Key Findings & Results</h3>
+                            <div class="grid sm:grid-cols-3 gap-4">
+                                <div
+                                    class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col justify-center items-center text-center gap-2 shadow-lg">
+                                    <div class="text-3xl font-bold text-blue-900 font-bold">98%</div>
+                                    <div class="text-sm text-slate-400 leading-tight">Task completion accuracy in
+                                        studies</div>
+                                </div>
+                                <div
+                                    class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col justify-center items-center text-center gap-2 shadow-lg">
+                                    <div class="text-3xl font-bold text-blue-900 font-bold">30</div>
+                                    <div class="text-sm text-slate-400 leading-tight">Participants in controlled study
+                                    </div>
+                                </div>
+                                <div
+                                    class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col justify-center items-center text-center gap-2 shadow-lg">
+                                    <div class="text-3xl font-bold text-blue-900 font-bold">High</div>
+                                    <div class="text-sm text-slate-400 leading-tight">Engagement and social confidence
+                                        boost</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rounded-xl border relative overflow-hidden shadow-sm bg-white">
+                            <img src="Performance.png" alt="Research Results" class="w-full h-auto block">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. COMMERCIALIZATION SECTION -->
+        <section id="commercialization" class="py-24 glass-section border-y border-slate-900">
+            <div class="container mx-auto px-4 md:px-6">
+                <div data-aos="fade-up" class="text-center max-w-3xl mx-auto mb-16">
+                    <div
+                        class="inline-flex items-center rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-sm font-bold text-blue-400 mb-4">
+                        Beyond Academia</div>
+                    <h2 class="text-3xl font-bold tracking-tight md:text-4xl mb-4 text-blue-500">Commercialization & Future Potential</h2>
+                    <p class="text-lg text-slate-300">From research to real-world impact. A strategic roadmap for transforming this academic project into a sustainable product.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div data-aos="fade-up" class="rounded-xl border bg-blue-50/90 shadow-lg border-blue-200">
+                        <div class="p-6 pb-4 border-b border-blue-200">
+                            <h3 class="font-bold text-xl flex items-center gap-2 text-blue-900"><i data-lucide="globe"
+                                    class="h-5 w-5 text-blue-700"></i> Target Market</h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div>
+                                <h4 class="font-bold text-sm text-blue-700">Potential Customers</h4>
+                                <p class="text-blue-900 font-bold text-sm">Children with dyslexia (ages 6–12), primary schools,
+                                    special education centers, therapists, and government literacy programs.</p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-blue-700">Industry Relevance</h4>
+                                <p class="text-blue-900 font-bold text-sm">Highly relevant due to global adoption of digital
+                                    learning and the demand for inclusive tools that address social and cognitive needs.
+                                </p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-blue-700">Market Size</h4>
+                                <p class="text-blue-900 font-bold text-sm">Global EdTech market is valued at over USD 250
+                                    billion, with special education being a high-demand, growing niche.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div data-aos="fade-up" data-aos-delay="100"
+                        class="rounded-xl border bg-blue-50/90 shadow-lg border-blue-200">
+                        <div class="p-6 pb-4 border-b border-blue-200">
+                            <h3 class="font-bold text-xl flex items-center gap-2 text-blue-900"><i data-lucide="layers"
+                                    class="h-5 w-5 text-blue-700"></i> Deployment Pathways</h3>
+                        </div>
+                        <div class="p-6">
+                            <ul class="space-y-4">
+                                <li class="flex items-start gap-3">
+                                    <div
+                                        class="h-6 w-6 rounded-full bg-blue-200 flex items-center justify-center shrink-0 mt-0.5">
+                                        <span class="text-xs font-bold text-blue-900">1</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-blue-900">Cross-platform deployment via PC (Unreal Engine) and Mobile
+                                        (Flutter) for schools and home use.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <div
+                                        class="h-6 w-6 rounded-full bg-blue-200 flex items-center justify-center shrink-0 mt-0.5">
+                                        <span class="text-xs font-bold text-blue-900">2</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-blue-900">Cloud-based multiplayer system via secure servers for
+                                        real-time collaborative challenges.</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <div
+                                        class="h-6 w-6 rounded-full bg-blue-200 flex items-center justify-center shrink-0 mt-0.5">
+                                        <span class="text-xs font-bold text-blue-900">3</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-blue-900">Institutional integration packages for schools, therapy
+                                        centers, and government literacy programs.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold mb-6 text-center text-blue-300">Proposed Revenue Models</h3>
+                <div class="grid sm:grid-cols-3 gap-6 mb-16">
+                    <div data-aos="fade-up" data-aos-delay="0"
+                        class="rounded-xl border bg-blue-50/90 text-center shadow-lg border-blue-200 p-6 text-blue-900">
+                        <h4 class="font-bold text-lg mb-2">SaaS Subscription</h4>
+                        <p class="text-sm font-bold">Monthly subscription ($10–$30/month) for schools and therapy
+                            centers to access core multiplayer features and tracking dashboards.</p>
+                    </div>
+                    <div data-aos="fade-up" data-aos-delay="100"
+                        class="rounded-xl border bg-blue-50/90 text-center shadow-lg border-blue-200 p-6 text-blue-900">
+                        <h4 class="font-bold text-lg mb-2">Freemium Model</h4>
+                        <p class="text-sm font-bold">Free core literacy gameplay with premium analytics and voice
+                            communication enhancements available for $5–$20/month.</p>
+                    </div>
+                    <div data-aos="fade-up" data-aos-delay="200"
+                        class="rounded-xl border bg-blue-50/90 text-center shadow-lg border-blue-200 p-6 text-blue-900">
+                        <h4 class="font-bold text-lg mb-2">Enterprise Licensing</h4>
+                        <p class="text-sm font-bold">Custom packages for schools, NGOs, and government programs
+                            with large-scale deployment and technical integration support.</p>
+                    </div>
+                </div>
+
+                <div data-aos="fade-up" class="rounded-xl border bg-blue-50/90 border-blue-200 shadow-xl overflow-hidden">
+                    <div class="p-6 pb-4 border-b border-blue-200 bg-blue-100/50">
+                        <h3 class="font-bold text-xl text-blue-900">Development Roadmap</h3>
+                        <p class="text-sm font-bold text-blue-700 mt-1">Structured plan for future iterations and scaling</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="relative border-l-2 border-blue-400 ml-4 md:ml-6 space-y-8 pb-4">
+                            <div class="relative pl-8">
+                                <div class="absolute w-4 h-4 rounded-full bg-blue-600 -left-[9px] top-1"></div>
+                                <h4 class="font-bold text-lg text-blue-900">Next 6 Months</h4>
+                                <p class="text-blue-900 font-bold mt-1 text-sm">Focus on improving system stability and user
+                                    experience by refining multiplayer synchronization, enhancing mobile UI/UX,
+                                    expanding accessibility features (fonts, audio guidance, and interaction cues), and
+                                    conducting larger-scale testing with schools and therapy centers to validate
+                                    learning outcomes in real classroom environments.</p>
+                            </div>
+                            <div class="relative pl-8">
+                                <div class="absolute w-4 h-4 rounded-full bg-blue-400 -left-[9px] top-1"></div>
+                                <h4 class="font-bold text-lg text-blue-900">1–2 Years</h4>
+                                <p class="text-blue-900 font-bold mt-1 text-sm">Scale the platform regionally by expanding
+                                    language support for South Asian learners, integrating advanced AI-driven
+                                    personalization for adaptive difficulty and predictive learning support, and
+                                    introducing analytics dashboards for teachers, parents, and institutions to track
+                                    progress and engagement.</p>
+                            </div>
+                            <div class="relative pl-8">
+                                <div class="absolute w-4 h-4 rounded-full bg-blue-200 -left-[9px] top-1"></div>
+                                <h4 class="font-bold text-lg text-blue-900">Long-term Vision</h4>
+                                <p class="text-blue-900 font-bold mt-1 text-sm">To become a leading inclusive educational gaming
+                                    platform in South Asia that transforms dyslexia learning through multimodal
+                                    multiplayer experiences, setting a global benchmark for accessible, collaborative,
+                                    and emotionally supportive digital education systems.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. DOWNLOADS SECTION -->
+        <section id="downloads" class="py-24 glass-section border-t border-slate-900">
+            <div class="container mx-auto px-4 md:px-6">
+                <div data-aos="fade-up" class="text-center max-w-2xl mx-auto mb-12">
+                    <h2 class="text-3xl font-bold tracking-tight mb-4 text-blue-500">Resources & Downloads</h2>
+                    <p class="text-slate-300">Access detailed academic and technical documentation for this project.</p>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+                    <!-- Link 1 -->
+                    <a href="Abstract.pdf" target="_blank" download data-aos="zoom-in" data-aos-delay="0"
+                        class="block group">
+                        <div
+                            class="rounded-xl border card-glass">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="h-10 w-10 rounded bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <i data-lucide="file-text" class="h-5 w-5"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-blue-500 text-sm">Research Abstract</p>
+                                    <p class="text-xs text-slate-400">PDF • 1.2 MB</p>
+                                </div>
+                            </div>
+                            <i data-lucide="download"
+                                class="h-4 w-4 text-slate-400 group-hover:text-primary transition-colors"></i>
+                        </div>
+                    </a>
+                    <!-- Link 2 -->
+                    <a href="Final PPT.pdf" target="_blank" download data-aos="zoom-in" data-aos-delay="100"
+                        class="block group">
+                        <div
+                            class="rounded-xl border card-glass">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="h-10 w-10 rounded bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <i data-lucide="presentation" class="h-5 w-5"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-blue-500 text-sm">Presentation Slides</p>
+                                    <p class="text-xs text-slate-400">PDF • 4.5 MB</p>
+                                </div>
+                            </div>
+                            <i data-lucide="download"
+                                class="h-4 w-4 text-slate-400 group-hover:text-primary transition-colors"></i>
+                        </div>
+                    </a>
+                    <!-- Link 3 -->
+                    <a href="posters.html" target="_blank" data-aos="zoom-in" data-aos-delay="200" class="block group">
+                        <div
+                            class="rounded-xl border card-glass">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="h-10 w-10 rounded bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <i data-lucide="file-text" class="h-5 w-5"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-blue-500 text-sm">Project Posters</p>
+                                    <p class="text-xs text-slate-400">PDF • 8.1 MB</p>
+                                </div>
+                            </div>
+                            <i data-lucide="download"
+                                class="h-4 w-4 text-slate-400 group-hover:text-primary transition-colors"></i>
+                        </div>
+                    </a>
+                    <!-- Link 4 -->
+                    <a href="User_Manual.pdf" target="_blank" download data-aos="zoom-in" data-aos-delay="300"
+                        class="block group">
+                        <div
+                            class="rounded-xl border card-glass">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="h-10 w-10 rounded bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <i data-lucide="book-open" class="h-5 w-5"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-blue-500 text-sm">User Manual</p>
+                                    <p class="text-xs text-slate-400">PDF • 3.4 MB</p>
+                                </div>
+                            </div>
+                            <i data-lucide="download"
+                                class="h-4 w-4 text-slate-400 group-hover:text-primary transition-colors"></i>
+                        </div>
+                    </a>
+                    <!-- Link 5 -->
+                    <a href="https://github.com/" target="_blank" data-aos="zoom-in" data-aos-delay="400"
+                        class="block group">
+                        <div
+                            class="rounded-xl border card-glass">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="h-10 w-10 rounded bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <i data-lucide="code" class="h-5 w-5"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-blue-500 text-sm">GitHub Repository</p>
+                                    <p class="text-xs text-slate-400">Code • External Link</p>
+                                </div>
+                            </div>
+                            <i data-lucide="download"
+                                class="h-4 w-4 text-slate-400 group-hover:text-primary transition-colors"></i>
+                        </div>
+                    </a>
+                    <!-- Link 6 -->
+                    <a href="Paper.pdf" target="_blank" download data-aos="zoom-in" data-aos-delay="500"
+                        class="block group">
+                        <div
+                            class="rounded-xl border card-glass">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="h-10 w-10 rounded bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                    <i data-lucide="file-text" class="h-5 w-5"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-blue-500 text-sm">Research Paper Draft</p>
+                                    <p class="text-xs text-slate-400">PDF • 2.8 MB</p>
+                                </div>
+                            </div>
+                            <i data-lucide="download"
+                                class="h-4 w-4 text-slate-400 group-hover:text-primary transition-colors"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 10. FOOTER -->
+    <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-900">
+        <div class="container mx-auto px-4 md:px-6">
+            <div class="grid md:grid-cols-3 gap-8 items-center mb-8 border-b border-slate-800 pb-8">
+                <div class="text-center md:text-left">
+                    <h3 class="text-xl font-bold text-slate-100 mb-2">THE WORD GARDEN</h3>
+                    <p class="text-sm">B.Sc. (Hons) IT – Interactive Media<br />Sri Lanka Institute of Information
+                        Technology</p>
+                </div>
+                <div class="flex justify-center gap-4">
+                    <a href="#"
+                        class="h-10 w-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                        <i data-lucide="linkedin" class="h-5 w-5"></i><span class="sr-only">LinkedIn</span>
+                    </a>
+                    <a href="https://github.com/" target="_blank"
+                        class="h-10 w-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                        <i data-lucide="github" class="h-5 w-5"></i><span class="sr-only">GitHub</span>
+                    </a>
+                    <a href="#"
+                        class="h-10 w-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                        <i data-lucide="twitter" class="h-5 w-5"></i><span class="sr-only">Twitter</span>
+                    </a>
+                    <a href="mailto:youremail@example.com"
+                        class="h-10 w-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                        <i data-lucide="mail" class="h-5 w-5"></i><span class="sr-only">Email</span>
+                    </a>
+                </div>
+                <div class="text-center md:text-right text-sm">
+                    <p>Developed by <strong>H.T.P.N.P.Gunasekara</strong></p>
+                    <p>Academic Year: 2026</p>
+                </div>
+            </div>
+            <div class="text-center text-xs">
+                <p>&copy; 2026 H.T.P.N.P.Gunasekara | All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="Full View">
+    </div>
+
+    <!-- Launch Overlay -->
+    <div id="launch-overlay">
+        <div id="launch-loader" class="flex flex-col items-center">
+            <i data-lucide="zap" class="h-12 w-12 text-indigo-400 animate-pulse mb-4"></i>
+            <h3 class="text-2xl font-bold tracking-tighter">Initializing Prototype</h3>
+            <p class="text-slate-400 text-sm mt-2">Preparing secure access & build resources...</p>
+            <div class="launch-bar">
+                <div id="launch-progress" class="launch-progress"></div>
+            </div>
+        </div>
+
+        <div id="build-ready-card" class="bg-slate-900 border border-slate-800 p-8 rounded-2xl max-w-sm w-full text-center shadow-2xl">
+            <div class="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-indigo-500/20">
+                <i data-lucide="archive" class="h-10 w-10 text-indigo-400"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2">Build Ready</h3>
+            <p class="text-slate-400 text-sm mb-6">WordGarden_v1.0_Final.zip<br>Size: 42.5 MB</p>
+            
+            <button onclick="triggerActualDownload()" class="download-btn-premium w-full py-4 rounded-xl text-white font-bold flex items-center justify-center gap-2 group">
+                Download Build <i data-lucide="download" class="h-5 w-5 group-hover:translate-y-0.5 transition-transform"></i>
+            </button>
+            
+            <button onclick="closeLaunchOverlay()" class="mt-4 text-slate-400 hover:text-white text-sm transition-colors">
+                Cancel & Return
+            </button>
+        </div>
+    </div>
+
+    <!-- Initialization Scripts -->
+    <script>
+        // Custom Cursor
+        const cursor = document.getElementById('custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        
+        document.querySelectorAll('a, button, .gallery-item').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+        });
+
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('scroll-progress').style.width = scrolled + '%';
+            
+            // Header transition
+            const header = document.querySelector('header');
+            if (winScroll > 50) {
+                header.style.margin = '0';
+                header.style.borderRadius = '0';
+            } else {
+                header.style.margin = '1rem';
+                header.style.borderRadius = '1rem';
+            }
+        });
+
+        // Animated Counters
+        const observerOptions = { threshold: 0.5 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = parseInt(counter.getAttribute('data-target'));
+                    let count = 0;
+                    const updateCount = () => {
+                        const increment = target / 50;
+                        if (count < target) {
+                            count += increment;
+                            counter.innerText = Math.ceil(count);
+                            setTimeout(updateCount, 20);
+                        } else {
+                            counter.innerText = target;
+                        }
+                    };
+                    updateCount();
+                    observer.unobserve(counter);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.counter').forEach(c => observer.observe(c));
+
+        function launchDemoSequence() {
+            const overlay = document.getElementById('launch-overlay');
+            const progress = document.getElementById('launch-progress');
+            const loader = document.getElementById('launch-loader');
+            const card = document.getElementById('build-ready-card');
+            
+            overlay.style.display = 'flex';
+            overlay.style.opacity = '1';
+            loader.style.display = 'flex';
+            card.style.display = 'none';
+            
+            // Push state to allow back button to close
+            window.location.hash = 'launch';
+            
+            setTimeout(() => {
+                progress.style.width = '100%';
+            }, 100);
+
+            setTimeout(() => {
+                // Transition to Build Ready
+                loader.style.display = 'none';
+                card.style.display = 'flex';
+            }, 1800);
+        }
+
+        // Handle browser back button
+        window.addEventListener('hashchange', () => {
+            if (window.location.hash !== '#launch') {
+                closeLaunchOverlay(true);
+            }
+        });
+
+        function triggerActualDownload() {
+            const link = document.createElement('a');
+            link.href = 'untitled1.zip';
+            link.download = 'WordGarden_Build_v1.zip';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            closeLaunchOverlay();
+        }
+
+        function closeLaunchOverlay(fromHash = false) {
+            const overlay = document.getElementById('launch-overlay');
+            const progress = document.getElementById('launch-progress');
+            
+            overlay.style.opacity = '0';
+            
+            // Clear hash if we're closing manually (not via back button)
+            if (!fromHash && window.location.hash === '#launch') {
+                history.back();
+            }
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                progress.style.width = '0%';
+            }, 500);
+        }
+    </script>
+    <!-- AOS Animation Engine -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 50,
+        });
+    </script>
+
+    <!-- Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
+
+    <!-- Lightbox Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+
+            // Add click listeners to all images in gallery and research sections
+            const clickableImages = document.querySelectorAll('#gallery img, #research img, #problem img');
+
+            clickableImages.forEach(img => {
+                img.classList.add('gallery-item');
+                img.addEventListener('click', () => {
+                    lightboxImg.src = img.src;
+                    lightbox.classList.add('active');
+                    document.body.style.overflow = 'hidden'; // Prevent scroll
+                });
+            });
+
+            // Close lightbox
+            lightbox.addEventListener('click', () => {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scroll
+            });
+
+            // Close with Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+    </script>
+
+    <!-- Mobile Menu Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIcon = document.getElementById('menu-icon');
+            let isOpen = false;
+
+            menuBtn.addEventListener('click', () => {
+                isOpen = !isOpen;
+                if (isOpen) {
+                    mobileMenu.classList.remove('hidden');
+                    menuIcon.setAttribute('data-lucide', 'x');
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    menuIcon.setAttribute('data-lucide', 'menu');
+                }
+                lucide.createIcons();
+            });
+
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    isOpen = false;
+                    mobileMenu.classList.add('hidden');
+                    menuIcon.setAttribute('data-lucide', 'menu');
+                    lucide.createIcons();
+                });
+            });
+        });
+
+        // WOW Factors JS
+        // Custom Cursor
+        const cursor = document.getElementById('custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        
+        document.querySelectorAll('a, button, .gallery-item').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+        });
+
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            const progress = document.getElementById('scroll-progress');
+            if (progress) progress.style.width = scrolled + '%';
+            
+            // Header transition
+            const header = document.querySelector('header');
+            if (header) {
+                if (winScroll > 50) {
+                    header.style.margin = '0';
+                    header.style.borderRadius = '0';
+                    header.classList.add('border-b');
+                } else {
+                    header.style.margin = '1rem';
+                    header.style.borderRadius = '1rem';
+                    header.classList.remove('border-b');
+                }
+            }
+        });
+
+        // Animated Counters
+        const observerOptions = { threshold: 0.5 };
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = parseInt(counter.getAttribute('data-target'));
+                    let count = 0;
+                    const updateCount = () => {
+                        const increment = target / 50;
+                        if (count < target) {
+                            count += increment;
+                            counter.innerText = Math.ceil(count);
+                            setTimeout(updateCount, 20);
+                        } else {
+                            counter.innerText = target;
+                        }
+                    };
+                    updateCount();
+                    counterObserver.unobserve(counter);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.counter').forEach(c => counterObserver.observe(c));
+    </script>
+</body>
+
+</html>
+
